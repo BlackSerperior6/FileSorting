@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <fstream>
 
+#include "NaturalMerge.h"
 #include "ManyPhaseMerge.h"
 
 using namespace std;

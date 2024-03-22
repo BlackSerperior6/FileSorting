@@ -5,6 +5,12 @@
 
 #include "CommonFunctions.h"
 
+struct Bucket
+{
+	Series* seriesArr;
+	int lenght;
+};
+
 using namespace std;
 
 pair<int, int> GetFibonnachiNumbers(int numberToCompareTo, pair<int, int> PreviousTwoNumbers)
@@ -27,63 +33,66 @@ pair<int, int> GetFibonnachiNumbers(int numberToCompareTo)
 
 void SortUsingManyPhaseMerging(istream* file, int Lenght)
 {
-	pair<int*, int>* SeriesArr = new pair<int*, int>[Lenght]; //first - серия, second - его длина
+	Series* SeriesArr = new Series[Lenght]; //first - серия, second - его длина
 	int AmountOfSeries = 1;
 
 	int indexOfCurSeries = 0;
-	SeriesArr[0].first = new int[Lenght];
-	SeriesArr[0].second = 1;
+	SeriesArr[0].elements = new int[Lenght];
+	SeriesArr[0].lenght = 1;
 
-	file->read((char*)&SeriesArr[0].first[0], sizeof(int));
+	file->read((char*)&SeriesArr[0].elements[0], sizeof(int));
 
 	for (int i = 1; i < Lenght; i++)
 	{
 		int curElement;
 		file->read((char*)&curElement, sizeof(int));
 
-		if (curElement >= SeriesArr[indexOfCurSeries].first[SeriesArr[indexOfCurSeries].second - 1])
+		if (curElement >= SeriesArr[indexOfCurSeries].elements[SeriesArr[indexOfCurSeries].lenght - 1])
 		{
-			SeriesArr[indexOfCurSeries].first[SeriesArr[indexOfCurSeries].second] = curElement;
-			SeriesArr[indexOfCurSeries].second++;
+			SeriesArr[indexOfCurSeries].elements[SeriesArr[indexOfCurSeries].lenght] = curElement;
+			SeriesArr[indexOfCurSeries].lenght++;
 		}
 		else
 		{
 			indexOfCurSeries++;
 			AmountOfSeries++;
 
-			SeriesArr[indexOfCurSeries].first = new int[Lenght];
-			SeriesArr[indexOfCurSeries].second = 1;
-			SeriesArr[indexOfCurSeries].first[0] = curElement;
+			SeriesArr[indexOfCurSeries].elements = new int[Lenght];
+			SeriesArr[indexOfCurSeries].lenght = 1;
+			SeriesArr[indexOfCurSeries].elements[0] = curElement;
 		}
 	}
 
 	pair<int, int> PerfectFibonachiNumbers = GetFibonnachiNumbers(Lenght);
 
-	pair<pair<int*, int>*, int>* Buckets = new pair<pair<int*, int>*, int>[3];
+	Bucket* Buckets = new Bucket[3];
 
-	Buckets[0].second = PerfectFibonachiNumbers.second;
-	Buckets[1].second = PerfectFibonachiNumbers.first;
-	Buckets[2].second = 0;
+	Buckets[0].lenght = PerfectFibonachiNumbers.second;
+	Buckets[1].lenght = PerfectFibonachiNumbers.first;
+	Buckets[2].lenght = 0;
 
 	for (int i = 0; i < 3; i++)
 	{
-		for (int j = 0; j < Buckets[i].second; j++)
-			Buckets[i].first = new pair<int*, int>[Lenght];
+		for (int j = 0; j < Lenght; j++)
+			Buckets[i].seriesArr = new Series[Lenght];
 	}
 
 	for (int i = 0; i < 3; i++)
 	{
-		for (int j = 0; j < Buckets[i].second; j++)
-			Buckets[i].first[j].second = 0;
+		for (int j = 0; j < Lenght; j++) 
+		{
+			Buckets[i].seriesArr[j].elements = new int[Lenght];
+			Buckets[i].seriesArr[j].lenght = 0;
+		}	
 	}
 
 	indexOfCurSeries = 0;
 
 	for (int i = 0; i < 2 && indexOfCurSeries < AmountOfSeries; i++)
 	{
-		for (int j = 0; j < Buckets[i].second && indexOfCurSeries < AmountOfSeries; j++)
+		for (int j = 0; j < Buckets[i].lenght && indexOfCurSeries < AmountOfSeries; j++)
 		{
-			Buckets[i].first[j] = SeriesArr[indexOfCurSeries];
+			Buckets[i].seriesArr[j] = SeriesArr[indexOfCurSeries];
 			indexOfCurSeries++;
 		}
 	}
@@ -96,35 +105,41 @@ void SortUsingManyPhaseMerging(istream* file, int Lenght)
 
 	while (AmountOfSeries > 1)
 	{
-		int NewLenght = Buckets[IndexOfTheBiggerBucket].second - Buckets[IndexOfTheSmallerBucket].second;
+		int NewLenght = Buckets[IndexOfTheBiggerBucket].lenght - Buckets[IndexOfTheSmallerBucket].lenght;
 
 		int curIndexOfTheHelpingBucket = 0;
-		int lastIndexOfSmalletBucket = Buckets[IndexOfTheSmallerBucket].second - 1;
+		int lastIndexOfSmallerBucket = Buckets[IndexOfTheSmallerBucket].lenght - 1;
 
-		for (int i = Buckets[IndexOfTheBiggerBucket].second - 1; i > NewLenght; i--)
+		for (int i = Buckets[IndexOfTheBiggerBucket].lenght - 1; i > NewLenght - 1; i--)
 		{
-			pair<int*, int> NewSeries = MergeSeries(Buckets[IndexOfTheBiggerBucket].first[i], Buckets[IndexOfTheSmallerBucket].first[lastIndexOfSmalletBucket]);
+			Series NewSeries = MergeSeries(Buckets[IndexOfTheBiggerBucket].seriesArr[i], Buckets[IndexOfTheSmallerBucket].seriesArr[lastIndexOfSmallerBucket]);
 
-			cout << (Buckets[IndexOfTheHelpingBucket].first == nullptr) << endl;
+			Buckets[IndexOfTheHelpingBucket].seriesArr[curIndexOfTheHelpingBucket] = NewSeries;
 
-			Buckets[IndexOfTheHelpingBucket].first[curIndexOfTheHelpingBucket] = NewSeries;
-
-			Buckets[IndexOfTheHelpingBucket].second++;
+			Buckets[IndexOfTheHelpingBucket].lenght++;
 
 			curIndexOfTheHelpingBucket++;
-			lastIndexOfSmalletBucket--;
+			lastIndexOfSmallerBucket--;
 
 			AmountOfSeries--;
 		}
 
-		Buckets[IndexOfTheBiggerBucket].second -= Buckets[IndexOfTheSmallerBucket].second;
+		Buckets[IndexOfTheBiggerBucket].lenght -= Buckets[IndexOfTheSmallerBucket].lenght;
 
-		for (int i = 0; i < Buckets[IndexOfTheSmallerBucket].second; i++)
-			delete[] Buckets[IndexOfTheSmallerBucket].first[i].first;
+		for (int i = 0; i < Buckets[IndexOfTheSmallerBucket].lenght; i++)
+			delete[] Buckets[IndexOfTheSmallerBucket].seriesArr[i].elements;
 
-		delete[] Buckets[IndexOfTheSmallerBucket].first;
+		delete[] Buckets[IndexOfTheSmallerBucket].seriesArr;
+
+		Buckets[IndexOfTheSmallerBucket].seriesArr = new Series[Lenght];
+
+		for (int i = 0; i < Lenght; i++)
+		{
+			Buckets[IndexOfTheSmallerBucket].seriesArr[i].elements = new int[Lenght];
+			Buckets[IndexOfTheSmallerBucket].seriesArr[i].lenght = 0;
+		}
 	
-		Buckets[IndexOfTheSmallerBucket].second = 0;
+		Buckets[IndexOfTheSmallerBucket].lenght = 0;
 
 		int tmp = IndexOfTheBiggerBucket;
 		IndexOfTheBiggerBucket = IndexOfTheHelpingBucket;
@@ -132,25 +147,27 @@ void SortUsingManyPhaseMerging(istream* file, int Lenght)
 		IndexOfTheSmallerBucket = tmp;
 	}
 
-	pair<int*, int> sortedContent = Buckets[IndexOfTheBiggerBucket].first[0];
+	Series sortedContent = Buckets[IndexOfTheBiggerBucket].seriesArr[0];
 
 	ofstream Output("F2.txt");
 
-	Output << sortedContent.first[0];
-	cout << sortedContent.first[0];
+	Output << sortedContent.elements[0];
+	cout << sortedContent.elements[0];
 
-	for (int i = 1; i < sortedContent.second; i++)
+	for (int i = 1; i < sortedContent.lenght; i++)
 	{
-		cout << " " << sortedContent.first[i];
-		Output << " " << sortedContent.first[i];
+		cout << " " << sortedContent.elements[i];
+		Output << " " << sortedContent.elements[i];
 	}
+
+	Output.close();
 
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < Lenght; j++)
-			delete[] Buckets[i].first[j].first;
+			delete[] Buckets[i].seriesArr[j].elements;
 
-		delete[] Buckets[i].first;
+		delete[] Buckets[i].seriesArr;
 	}
 
 	delete[] Buckets;

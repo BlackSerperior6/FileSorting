@@ -3,6 +3,12 @@
 
 using namespace std;
 
+struct Series
+{
+    int* elements;
+    int lenght;
+};
+
 void HoareQuickSorting(int* Arr, int startIndex, int endIndex)
 {
     //≈сли индекс началс€ <= индекс конца
@@ -45,32 +51,32 @@ void HoareQuickSorting(int* Arr, int Lenght)
         HoareQuickSorting(Arr, 0, Lenght - 1); //«апускаем рекурсию с начальным индексом 0 и индексом конца массива  
 }
 
-pair<int*, int> MergeSeries(pair<int*, int>& SeriesOne, pair<int*, int>& SeriesTwo)
+Series MergeSeries(Series& SeriesOne, Series& SeriesTwo)
 {
-	pair<int*, int> NewSeries;
-	NewSeries.first = new int[SeriesOne.second + SeriesTwo.second];
+    Series NewSeries;
+	NewSeries.elements = new int[SeriesOne.lenght + SeriesTwo.lenght];
 
-	for (int i = 0; i < SeriesOne.second; i++)
-		NewSeries.first[i] = SeriesOne.first[i];
+	for (int i = 0; i < SeriesOne.lenght; i++)
+		NewSeries.elements[i] = SeriesOne.elements[i];
 
-	int counter = SeriesOne.second;
+	int counter = SeriesOne.lenght;
 
-	for (int i = 0; i < SeriesTwo.second; i++)
+	for (int i = 0; i < SeriesTwo.lenght; i++)
 	{
-		NewSeries.first[counter] = SeriesTwo.first[i];
+		NewSeries.elements[counter] = SeriesTwo.elements[i];
 		counter++;
 	}
 
-	NewSeries.second = SeriesOne.second + SeriesTwo.second;
+	NewSeries.lenght = SeriesOne.lenght + SeriesTwo.lenght;
 
-	HoareQuickSorting(NewSeries.first, NewSeries.second);
+	HoareQuickSorting(NewSeries.elements, NewSeries.lenght);
 
 	return NewSeries;
 }
 
-void RemoveElement(pair<int*, int>* Arr, int Index, int Lenght)
+void RemoveElement(Series* Arr, int Index, int Lenght)
 {
-	delete[] Arr[Index].first;
+	delete[] Arr[Index].elements;
 	for (int i = Index; i < Lenght - 1; i++)
 		Arr[i] = Arr[i + 1];
 }
