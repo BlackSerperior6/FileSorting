@@ -7,6 +7,18 @@ struct Series
 {
     int* elements;
     int lenght;
+
+    void PrintSeriers()
+    {
+        if (lenght <= 0)
+            return;
+
+        cout << elements[0];
+        for (int i = 1; i < lenght; i++)
+            cout << " " << elements[i];
+
+        cout << endl;
+    }
 };
 
 void HoareQuickSorting(int* Arr, int startIndex, int endIndex)

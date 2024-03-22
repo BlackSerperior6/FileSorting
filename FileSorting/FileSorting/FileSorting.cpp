@@ -13,7 +13,7 @@ int main()
 	srand(time(0));
 	setlocale(LC_ALL, "RUS");
 
-	functionPointer functions[] = {&SortUsingNaturalMerge};
+	functionPointer functions[] = {&SortUsingNaturalMerge, &SortUsingManyPhaseMerging};
 	int Lenght;
 
 	for (functionPointer function : functions)
@@ -22,7 +22,7 @@ int main()
 
 		cin >> Lenght;
 
-		ofstream Output("F1.bin");
+		ofstream Output("F1.bin", ios_base::binary);
 
 		for (int i = 0; i < Lenght; i++)
 		{
@@ -30,14 +30,14 @@ int main()
 
 			cout << element << " ";
 
-			Output.write((char*)&element, sizeof(int));
+			Output.write(reinterpret_cast<const char*>(&element), sizeof(element));
 		}
 
 		cout << endl;
 
 		Output.close();
 
-		ifstream Input("F1.bin");
+		ifstream Input("F1.bin", ios_base::binary);
 
 		function(&Input, Lenght);
 
