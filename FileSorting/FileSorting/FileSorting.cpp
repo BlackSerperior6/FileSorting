@@ -13,7 +13,7 @@ int main()
 	srand(time(0));
 	setlocale(LC_ALL, "RUS");
 
-	functionPointer functions[] = {&SortUsingNaturalMerge, &SortUsingManyPhaseMerging};
+	functionPointer functions[] = {&SortUsingNaturalMerge};
 	int Lenght;
 
 	for (functionPointer function : functions)

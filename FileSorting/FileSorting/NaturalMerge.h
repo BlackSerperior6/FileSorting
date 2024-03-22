@@ -41,11 +41,19 @@ void SortUsingNaturalMerge(ifstream *file, int Lenght)
 		}
 	}
 
+	cout << AmountOfSeries << endl;
+
 	while (AmountOfSeries > 1)
 	{
 		for (int i = 0; i < AmountOfSeries - 1; i++)
 		{
+			cout << i << ":" << endl;
 			Series MergedSeries = MergeSeries(SeriesArr[i], SeriesArr[i + 1]);
+
+			for (int i = 0; i < MergedSeries.lenght; i++)
+				cout << MergedSeries.elements[i] << " ";
+
+			cout << endl;
 
 			delete[] SeriesArr[i].elements;
 			SeriesArr[i] = MergedSeries;
