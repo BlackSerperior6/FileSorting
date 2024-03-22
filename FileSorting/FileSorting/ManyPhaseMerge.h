@@ -5,13 +5,13 @@
 
 #include "CommonFunctions.h"
 
+using namespace std;
+
 struct Bucket
 {
 	Series* seriesArr;
 	int lenght;
 };
-
-using namespace std;
 
 pair<int, int> GetFibonnachiNumbers(int numberToCompareTo, pair<int, int> PreviousTwoNumbers)
 {
@@ -31,8 +31,10 @@ pair<int, int> GetFibonnachiNumbers(int numberToCompareTo)
 	return GetFibonnachiNumbers(numberToCompareTo, { 0, 1 });
 }
 
-void SortUsingManyPhaseMerging(istream* file, int Lenght)
+void SortUsingManyPhaseMerging(ifstream* file, int Lenght)
 {
+	cout << "Метод многофазной сортировки!" << endl;
+
 	Series* SeriesArr = new Series[Lenght]; //first - серия, second - его длина
 	int AmountOfSeries = 1;
 

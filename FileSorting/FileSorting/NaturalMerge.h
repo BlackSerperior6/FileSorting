@@ -7,8 +7,10 @@
 
 using namespace std;
 
-void SortUsingNaturalMerge(istream *file, int Lenght)
+void SortUsingNaturalMerge(ifstream *file, int Lenght)
 {
+	cout << "Метод естественного слияния!" << endl;
+
 	Series* SeriesArr = new Series[Lenght]; //first - серия, second - его длина
 	int AmountOfSeries = 1;
 

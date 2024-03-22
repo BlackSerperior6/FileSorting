@@ -6,29 +6,41 @@
 
 using namespace std;
 
+typedef void(*functionPointer)(ifstream*, int);
+
 int main()
 {
 	srand(time(0));
+	setlocale(LC_ALL, "RUS");
+
+	functionPointer functions[] = {&SortUsingNaturalMerge, &SortUsingManyPhaseMerging};
 	int Lenght;
 
-	cin >> Lenght;
-
-	ofstream Output("F1.bin");
-
-	for (int i = 0; i < Lenght; i++)
+	for (functionPointer function : functions)
 	{
-		int element = rand() % 100;
+		cout << "Режим генерации случайных элементов" << endl;
 
-		cout << element << " ";
+		cin >> Lenght;
 
-		Output.write((char*) &element, sizeof(int));
+		ofstream Output("F1.bin");
+
+		for (int i = 0; i < Lenght; i++)
+		{
+			int element = rand() % 100;
+
+			cout << element << " ";
+
+			Output.write((char*)&element, sizeof(int));
+		}
+
+		cout << endl;
+
+		Output.close();
+
+		ifstream Input("F1.bin");
+
+		function(&Input, Lenght);
+
+		cout << endl << endl;
 	}
-
-	cout << endl;
-
-	Output.close();
-
-	ifstream Input("F1.bin");
-
-	SortUsingManyPhaseMerging(&Input, Lenght);
 }
