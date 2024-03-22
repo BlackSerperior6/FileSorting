@@ -175,6 +175,4 @@ void SortUsingManyPhaseMerging(ifstream* file, int Lenght)
 	delete[] Buckets;
 
 	delete[] SeriesArr;
-
-	Output.close();
 }

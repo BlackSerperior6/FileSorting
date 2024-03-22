@@ -20,7 +20,12 @@ int main()
 	{
 		cout << "Режим генерации случайных элементов" << endl;
 
-		cin >> Lenght;
+		do
+		{
+			cout << "Введите кол-во элементов массива" << endl;
+			cin >> Lenght;
+		}
+		while (Lenght <= 1);
 
 		ofstream Output("F1.bin", ios_base::binary);
 
@@ -40,6 +45,40 @@ int main()
 		ifstream Input("F1.bin", ios_base::binary);
 
 		function(&Input, Lenght);
+
+		Input.close();
+
+		cout << endl << endl;
+
+		cout << "Режим генерации элементов вручную" << endl;
+
+		do
+		{
+			cout << "Введите кол-во элементов массива" << endl;
+			cin >> Lenght;
+		} 
+		while (Lenght <= 1);
+
+		Output.open("F1.bin", ios_base::binary);
+
+		for (int i = 0; i < Lenght; i++)
+		{
+			int element;
+
+			cin >> element;
+
+			Output.write(reinterpret_cast<const char*>(&element), sizeof(element));
+		}
+
+		cout << endl;
+
+		Output.close();
+
+		Input.open("F1.bin", ios_base::binary);
+
+		function(&Input, Lenght);
+
+		Input.close();
 
 		cout << endl << endl;
 	}
